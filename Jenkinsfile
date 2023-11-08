@@ -11,7 +11,7 @@ pipeline {
         
             steps { 
                     echo 'Building docker Image'
-                    sh 'docker build -t $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER .'
+                    sh 'docker build -t $NEXUS_DOCKER_REPO'
                 }
         }
 
