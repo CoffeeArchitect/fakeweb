@@ -18,7 +18,7 @@ pipeline {
         
             steps { 
                     echo 'Building docker Image'
-                    sh 'docker build -t $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER .'
+                    sh 'docker build -t $NEXUS_DOCKER_REPO/fakeweb:test'
                 }
         }
 
@@ -37,7 +37,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 echo 'Pushing Imgaet to docker hub'
-                sh 'docker push $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER'
+                sh 'docker push $NEXUS_DOCKER_REPO/fakeweb:test'
             }
         }
     }
