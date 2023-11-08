@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         NEXUS_CREDS = credentials('nexus_creds')
-        NEXUS_DOCKER_REPO = 'localhost:8082'
+        NEXUS_DOCKER_REPO = 'localhost:8083'
     }
 
     stages {
