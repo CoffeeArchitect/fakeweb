@@ -1,36 +1,36 @@
-/* groovylint-disable-next-line CompileStatic */
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('nexus-creds')
+        NEXUS_CREDS = credentials('nexus_creds')
+        NEXUS_DOCKER_REPO = 'localhost:8082'
     }
 
     stages {
-        /* stage('SCM Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/sagarkrp/fakeweb.git'
-            //sh 'whoami'
-            }
-        } */
-
-        stage('Docker Login') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin docker.io'
-                echo 'Login Completed'
-            }
+       
+       stage('Docker Build') {
+        
+            steps { 
+                    echo 'Building docker Image'
+                    sh 'docker build -t $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER .'
+                }
         }
 
-        stage('Docker Build') {
+       stage('Docker Login') {
             steps {
-                echo 'Building docker Image'
-                sh 'docker build -t sagarkp/fakeweb:$BUILD_NUMBER .'
+                echo 'Nexus Docker Repository Login'
+                script{
+                    withCredentials([usernamePassword(credentialsId: 'nexus_creds', usernameVariable: 'USER', passwordVariable: 'PASS' )]){
+                       sh ' echo $PASS | docker login -u $USER --password-stdin $NEXUS_DOCKER_REPO'
+                    }
+                   
+                }
             }
         }
 
         stage('Docker Push') {
             steps {
                 echo 'Pushing Imgaet to docker hub'
-                sh 'docker push sagarkp/fakeweb:$BUILD_NUMBER'
+                sh 'docker push $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER'
             }
         }
     }
